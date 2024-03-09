@@ -2,6 +2,7 @@
 #include <Geode/modify/FMODAudioEngine.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
+#include <Geode/modify/CCSprite.hpp>
 
 using namespace geode::prelude;
 
@@ -21,71 +22,35 @@ class $modify(FMODAudioEngine) {
 	}
 };
 
-class $modify(MyMenuLayer, MenuLayer) {
-	void myClose(CCObject* sender) {
+class $modify(MenuLayer) {
+	void onQuit(CCObject* sender) {
 		FLAlertLayer::create(
 			"Info",
 			"You <cr>GONNA</c> play Geometry Dash!\nI'm evil, MUHAHAHAHAHA!",
 			"Ok, nevermind"
 		)->show();
 	}
+};
 
-	bool init() {
-		if(!MenuLayer::init()) return false;
-		
-		auto logo = this->getChildByID("main-title");
-		logo->setVisible(false);
-
-		auto trash_sprite = CCSprite::create("my_GJ_logo_001.png"_spr);
-		trash_sprite->setPosition(logo->getPosition());
-		this->addChild(trash_sprite);
-
-		auto exitbtn = this->getChildByID("close-menu")->getChildByID("close-button");
-		if(exitbtn != nullptr) {
-			exitbtn->setVisible(false);
-			auto exitSpr = CCSprite::createWithSpriteFrameName("GJ_closeBtn_001.png");
-			exitSpr->setScale(0.7);
-			auto myExitBtn = CCMenuItemSpriteExtra::create(
-				exitSpr,
-				this,
-				menu_selector(MyMenuLayer::myClose)
-			);
-			myExitBtn->setPosition(exitbtn->getPosition());
-			this->getChildByID("close-menu")->addChild(myExitBtn);
+class $modify(LevelInfoLayer) {
+	void onDelete(CCObject* sender) {
+		if(Mod::get()->getSettingValue<bool>("break-delete")) {
+			FLAlertLayer::create(
+				"Error",
+				"You <cr>CAN'T</c> do that!",
+				"nah"
+			)->show();
+		} else {
+			LevelInfoLayer::onDelete(sender);
 		}
-
-		return true;
 	}
 };
 
-class $modify(MyLevelInfoLayer, LevelInfoLayer) {
-	void onMyDelete(CCObject* sender) {
-		FLAlertLayer::create(
-			"Error",
-			"You <cr>CAN'T</c> do that!",
-			"nah"
-		)->show();
-	}
-	
-	bool init(GJGameLevel* p0, bool p1) {
-		if(!LevelInfoLayer::init(p0, p1)) return false;
-
-		if(Mod::get()->getSettingValue<bool>("break-delete")) {
-			auto delete_btn = this->getChildByID("right-side-menu")->getChildByID("delete-button");
-			if(delete_btn != nullptr) {
-				delete_btn->setVisible(false);
-				auto deleteSpr = CCSprite::createWithSpriteFrameName("GJ_deleteBtn_001.png");
-				auto deleteBtn = CCMenuItemSpriteExtra::create(
-					deleteSpr,
-					this,
-					menu_selector(MyLevelInfoLayer::onMyDelete)
-				);
-				deleteBtn->setPosition(delete_btn->getPosition());
-				this->getChildByID("right-side-menu")->addChild(deleteBtn);
-			}
+class $modify(CCSprite) {
+	static CCSprite* createWithSpriteFrameName(char const* pszSpriteFrameName) {
+		if(std::strcmp(pszSpriteFrameName, "GJ_logo_001.png") == 0) {
+			return CCSprite::create("my_GJ_logo_001.png"_spr);
 		}
-		
-
-		return true;
+		return CCSprite::createWithSpriteFrameName(pszSpriteFrameName);
 	}
 };
