@@ -1,0 +1,28 @@
+{
+	"geode": "2.0.0-beta.21",
+	"gd": {
+		"win": "2.204",
+		"android": "2.205"
+	},
+	"version": "v1.0.0",
+	"id": "shineua.thedumbiestmodever",
+	"name": "TheDumbiestModEver",
+	"developer": "ShineUA",
+	"description": "Mod that shows the dumbiest mod ideas ever.",
+	"resources": {
+		"files": [
+			"resources/music/*"
+		],
+		"sprites": [
+			"resources/sprites/*"
+		]
+	},
+	"settings": {
+		"break-delete": {
+			"type": "bool",
+			"default": true,
+			"name": "Break delete level button",
+			"description": "Brokes delete level button."
+		}
+	}
+}
